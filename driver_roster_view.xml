@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+               <!--Driver Roster tree view-->
+                <record model="ir.ui.view" id="view_driver_roster_tree">
+                    <field name="name">Driver Roster</field>
+                    <field name="model">driver.roster</field>
+                    <field name="arch" type="xml">
+                        <tree string="Driver Roster" >
+                            <field name="employee_id"/>
+                            <field name="date"/>
+                        </tree>
+                    </field>
+                </record>
+
+               <!--Driver Roster form view-->
+                <record model="ir.ui.view" id="view_driver_roster_form">
+                    <field name="name">Driver Roster</field>
+                    <field name="model">driver.roster</field>
+                    <field name="arch" type="xml">
+                        <form string="Driver Roster" >
+                            <sheet>
+                                <group>
+                                    <group>
+                                        <field name="employee_id"/>
+                                    </group>
+                                    <group>
+                                        <field name="date" />
+                                    </group>
+                                </group>
+                                <notebook> 
+                                   <page string="Sale Orders">
+                                    <field name="roster_line">
+                                        <tree editable="bottom">
+                                            <field name="sale_order_id"  context="{'roster_date':parent.date,'roster':True}"/>
+                                            <field name="roster_id" invisible="1"/>
+                                            <field name="date" />
+                                    
+                                        </tree>
+                                    </field>
+                                  </page>
+                                </notebook>
+                            </sheet>
+                        </form>
+                    </field>
+                </record>
+
+               <!--Driver Roster search view-->
+                <record id="view_driver_roster_search" model="ir.ui.view">
+                    <field name="name">Driver Roster</field>
+                    <field name="model">driver.roster</field>
+                    <field name="arch" type="xml">
+                        <search string="Search Invoice">
+                            <field name="employee_id"/>
+                            <field name="date"/>
+                            <filter icon="terp-go-month" string="Month"
+                            name="month"
+                            domain="[('date','&lt;=',(datetime.date.today()+relativedelta(day=31)).strftime('%%Y-%%m-%%d')),('date','&gt;=',(datetime.date.today()-relativedelta(day=1)).strftime('%%Y-%%m-%%d'))]"
+                            help="Current Month"/>
+
+                            <filter icon="terp-go-year" string="Year"
+                            domain="[('date','&lt;=', time.strftime('%%Y-%%m-%%d')),('date','&gt;=',time.strftime('%%Y-01-01'))]"
+                            help="Current Year"/>
+                            <group expand="0" string="Group By">
+                                <filter string="Driver" context="{'group_by':'employee_id'}"/>
+                                <filter string="Date" context="{'group_by':'date'}"/>
+                            </group>
+                        </search>
+                    </field>
+                </record>
+
+               <!--Driver Roster action -->
+                <record model="ir.actions.act_window" id="action_driver_roster">
+                    <field name="name">Driver Roster</field>
+                    <field name="type">ir.actions.act_window</field>
+                    <field name="res_model">driver.roster</field>
+                    <field name="view_type">form</field>
+                    <field name="view_mode">tree,form</field>
+                    <field name="search_view_id" ref="view_driver_roster_search"/>
+                    <field name="help" type="html">
+                    <p class="oe_view_nocontent_create">
+                        Click to add new Driver Roster. 
+                    </p>
+                    </field>
+                </record>
+
+
+                <!-- sale order form inheriting -->
+                <record id="view_sale_roster_order_form_inherits" model="ir.ui.view">
+                    <field name="name">sale.order.form.inherits</field>
+                    <field name="model">sale.order</field>
+                    <field name="inherit_id" ref="sale.view_order_form"/>
+                    <field name="arch" type="xml">
+                    <field name="partner_id" position="after">
+                        <field name="sale_roster_line" invisible="1"/>
+                    </field>
+                    </field>
+                </record>
+
+                <menuitem id="menu_driver_roster" name="Driver Roster" action="action_driver_roster" parent="base.menu_sales" sequence="37"/>
+ </data>
+</openerp>
